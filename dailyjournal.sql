@@ -1,16 +1,15 @@
 CREATE TABLE `Entry` (
-    `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `date` TEXT NOT NULL,
-    `address` TEXT NOT NULL,
-    `moodId` INTEGER NOT NULL
+    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `date`  TEXT NOT NULL,
+    `concept`   TEXT NOT NULL,
+    `journal_entry` TEXT NOT NULL,
+    `mood_id`   INTEGER NOT NULL
 );
 
 CREATE TABLE `Mood` (
-    `id` INTEGER NOT NULL PRIMARY KEY
+    `id` INTEGER NOT NULL PRIMARY KEY,
     `label` TEXT NOT NULL
 );
-
-
 
 INSERT INTO `Mood` VALUES (null, "happy");
 INSERT INTO `Mood` VALUES (null, "sad");
