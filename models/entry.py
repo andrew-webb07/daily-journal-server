@@ -5,3 +5,4 @@ class Entry:
         self.concept = concept
         self.journal_entry = journal_entry
         self.mood_id = mood_id
+        self.mood = None
