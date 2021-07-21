@@ -1,15 +1,16 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from entries import get_single_entry, get_all_entries, delete_entry
+from entries import get_single_entry, get_all_entries, delete_entry, search_entries
 import json
 
 
 class HandleRequests(BaseHTTPRequestHandler):
     def parse_url(self, path):
         path_params = path.split("/")
-        resource = path_params[1]
+        resource = path_params[1] #resource = entries
+
         if "?" in resource:
-            param = resource.split("?")[1]  
-            resource = resource.split("?")[0]
+            param = resource.split("?")[1]  # param
+            resource = resource.split("?")[0] # resource = search
             pair = param.split("=")  
             key = pair[0] 
             value = pair[1] 
@@ -50,6 +51,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
+            if key == "search" and resource == "entries":
+                response = f"{search_entries(value)}"
+
         self.wfile.write(response.encode())
 
     def do_DELETE(self):
