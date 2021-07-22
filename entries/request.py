@@ -102,3 +102,22 @@ def create_entry(new_entry):
         id = db_cursor.lastrowid
         new_entry['id'] = id
     return json.dumps(new_entry)
+
+def update_entry(id, entry):
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        UPDATE Entry
+            SET
+                date = ?,
+                concept = ?,
+                journal_entry = ?,
+                mood_id = ?
+        WHERE id = ?
+        """, (entry['date'], entry['concept'], entry['journal_entry'], entry['mood_id'], id, ))
+
+        rows_affected = db_cursor.rowcount
+    if rows_affected == 0:
+        return False
+    else:
+        return True
