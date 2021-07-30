@@ -2,6 +2,8 @@ from entries.request import create_entry
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from entries import get_single_entry, get_all_entries, delete_entry, search_entries, create_entry, update_entry
 import json
+from tags import get_tags
+from moods import get_moods
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -52,6 +54,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
+
+            if resource == "tags":
+                response = f"{get_tags()}"
+            if resource == "moods":
+                response = f"{get_moods()}"
         elif len(parsed) == 3:
             ( resource, key, value ) = parsed
             if key == "search" and resource == "entries":
