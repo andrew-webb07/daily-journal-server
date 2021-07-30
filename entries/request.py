@@ -27,11 +27,29 @@ def get_all_entries():
             mood = Mood(row['mood_id'], row['label'])
             entry.mood = mood.__dict__
 
+            db_cursor.execute("""
+                SELECT
+                    t.id,
+                    t.name
+                FROM Tag t
+                JOIN Entry_tag et on t.id = et.tag_id
+                JOIN Entry e on e.id = et.entry_id
+                WHERE e.id = ?
+            """, (entry.id, ))
+
+            tag_rows = db_cursor.fetchall()
+            for tag_row in tag_rows:
+                tag = {
+                    'id': tag_row['id'],
+                    'name': tag_row['name']
+                }
+                entry.tags.append(tag)
+
             entries.append(entry.__dict__)
     return json.dumps(entries)
 
 
-def get_single_entry(id):
+def get_single_entry(email, password):
     with sqlite3.connect("./dailyjournal.db") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
@@ -46,8 +64,8 @@ def get_single_entry(id):
         FROM entry e
         JOIN Mood m
         ON m.id = e.mood_id
-        WHERE e.id = ?
-        """, ( id, ))
+        WHERE e.id = ? AND e.password = ?
+        """, ( email, password ))
 
         data = db_cursor.fetchone()
         entry = Entry(data['id'], data['date'], data['concept'], data['journal_entry'], data['mood_id'])
@@ -101,6 +119,14 @@ def create_entry(new_entry):
 
         id = db_cursor.lastrowid
         new_entry['id'] = id
+
+        for tag in new_entry['tags']:
+            db_cursor.execute("""
+            INSERT INTO Entry_tag
+                (entry_id, tag_id)
+            VALUES (?,?)
+            """, (new_entry['id'], tag['id']))
+            
     return json.dumps(new_entry)
 
 def update_entry(id, entry):

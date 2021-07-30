@@ -6,3 +6,7 @@ class Entry:
         self.journal_entry = journal_entry
         self.mood_id = mood_id
         self.mood = None
+        self.tags = []
+
+    def add_tag(self, tag):
+        self.tags.append(tag)
