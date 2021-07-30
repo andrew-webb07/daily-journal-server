@@ -49,7 +49,7 @@ def get_all_entries():
     return json.dumps(entries)
 
 
-def get_single_entry(email, password):
+def get_single_entry(id):
     with sqlite3.connect("./dailyjournal.db") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
@@ -64,8 +64,8 @@ def get_single_entry(email, password):
         FROM entry e
         JOIN Mood m
         ON m.id = e.mood_id
-        WHERE e.id = ? AND e.password = ?
-        """, ( email, password ))
+        WHERE e.id = ?
+        """, ( id, ))
 
         data = db_cursor.fetchone()
         entry = Entry(data['id'], data['date'], data['concept'], data['journal_entry'], data['mood_id'])
@@ -112,10 +112,10 @@ def create_entry(new_entry):
         db_cursor = conn.cursor()
         db_cursor.execute("""
         INSERT INTO Entry
-            ( date, concept, journal_entry, mood_id)
+            ( concept, journal_entry, date, mood_id)
         VALUES
             ( ?, ?, ?, ?);
-        """, (new_entry['date'], new_entry['concept'], new_entry['journal_entry'], new_entry['mood_id'], ))
+        """, (new_entry['concept'], new_entry['journal_entry'], new_entry['date'], new_entry['mood_id'], ))
 
         id = db_cursor.lastrowid
         new_entry['id'] = id
